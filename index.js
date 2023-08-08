@@ -28,7 +28,7 @@ var zlib = require("zlib");
 /* Globals */
 
 var endpoint = "goerli-nightly.es.private.tokamak.network";
-var index = "titan-alblogs-" + indexTimestamp; // adds a timestamp to index. Example: alblogs-2015.03.31
+var index = "titan-alblogs-" + indexTimestamp;
 
 var s3 = new AWS.S3();
 var totLogLines = 0; // Total number of log lines in the file
@@ -41,17 +41,27 @@ var numDocsAdded = 0; // Number of log lines added to ES so far
 function s3LogsToES(bucket, key, context, lineStream, recordStream) {
   // Note: The Lambda function should be configured to filter for .log.gz files
   // (as part of the Event Source "suffix" setting).
-
-  var s3Stream = s3.getObject({ Bucket: bucket, Key: key }).createReadStream();
-  var gunzipStream = zlib.createGunzip();
   // Flow: S3 file stream -> Log Line stream -> Log Record stream -> ES
-  s3Stream
-    .pipe(gunzipStream)
-    .pipe(lineStream)
-    .pipe(recordStream)
-    .on("data", function (parsedEntry) {
-      postDocumentToES(parsedEntry, context);
+
+  var gunzipStream = zlib
+    .createGunzip()
+    .on("data", function (chunk) {
+      lineStream.write(chunk);
+      gunzipStream.pause();
+    })
+    .on("error", function (err) {
+      console.log("gunzip error: ", err);
     });
+  var s3Stream = s3
+    .getObject({ Bucket: bucket, Key: key })
+    .createReadStream()
+    .on("data", function (chunk) {
+      gunzipStream.write(chunk);
+    });
+
+  lineStream.pipe(recordStream).on("data", function (parsedEntry) {
+    postDocumentToES(parsedEntry, context);
+  });
   s3Stream.on("error", function () {
     console.log(
       'Error getting object "' +
@@ -76,6 +86,7 @@ function postDocumentToES(doc, context) {
     method: "POST",
     headers: {
       Authorization: "Basic bG9nX2J1bGs6ZWxhc3RpYw==",
+      "Content-Type": "application/json",
     },
   };
 
@@ -92,7 +103,7 @@ function postDocumentToES(doc, context) {
     }
   });
 
-  req.write(JSON.stringify(doc));
+  req.write(doc);
   req.end();
 }
 /* Lambda "main": Execution starts here */
@@ -109,7 +120,7 @@ exports.handler = function (event, context) {
   var recordStream = new stream.Transform({ objectMode: true });
   recordStream._transform = function (line, encoding, done) {
     var logRecord = parse(line.toString());
-    var serializedRecord = JSON.stringify(logRecord);
+    var serializedRecord = JSON.stringify(logRecord, (k, v) => v ?? undefined);
     this.push(serializedRecord);
     totLogLines++;
     done();
@@ -145,8 +156,7 @@ function parse(line) {
     { elb: " " },
     { client: ":" },
     { client_port: " " },
-    { target: ":" },
-    { target_port: " " },
+    { target: " " },
     { request_processing_time: " " },
     { target_processing_time: " " },
     { response_processing_time: " " },
@@ -215,8 +225,6 @@ function parse(line) {
       parsed[label] = "-";
     });
   }
-
-  parsed[msg] = line;
 
   return parsed;
 }
