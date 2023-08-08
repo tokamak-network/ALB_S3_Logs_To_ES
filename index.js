@@ -15,6 +15,8 @@
  * permissions and limitations under the License.
  */
 /* Imports */
+require("dotenv").config();
+
 var AWS = require("aws-sdk");
 var http = require("http");
 var LineStream = require("byline").LineStream;
@@ -27,7 +29,7 @@ var indexTimestamp =
 var zlib = require("zlib");
 /* Globals */
 
-var endpoint = "goerli-nightly.es.private.tokamak.network";
+var endpoint = process.env.ES_ENDPOINT;
 var index = "titan-alblogs-" + indexTimestamp;
 
 var s3 = new AWS.S3();
