@@ -16,6 +16,11 @@ byline@4.2.1:
   resolved "https://registry.yarnpkg.com/byline/-/byline-4.2.1.tgz#f74a66fa6d8feff88b2725e0b2b0cf830cdf3f86"
   integrity sha512-TpRoV4f+nCiSpg46GzGnJ6QeLjuTr/Tx5xHhf9BllruZZ01HoK9N7NSlbWeDugJHEwqrAw8UrhdIBFQf+QjGLQ==
 
+dotenv@^16.3.1:
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.3.1.tgz#369034de7d7e5b120972693352a3bf112172cc3e"
+  integrity sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==
+
 emitter-component@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/emitter-component/-/emitter-component-1.1.1.tgz#065e2dbed6959bf470679edabeaf7981d1003ab6"
