@@ -87,7 +87,7 @@ function postDocumentToES(doc, context) {
     path: path.join("/", index, "_doc"),
     method: "POST",
     headers: {
-      Authorization: "Basic bG9nX2J1bGs6ZWxhc3RpYw==",
+      Authorization: String(process.env.ES_BASIC_AUTH),
       "Content-Type": "application/json",
     },
   };
