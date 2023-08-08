@@ -15,8 +15,6 @@
  * permissions and limitations under the License.
  */
 /* Imports */
-require("dotenv").config();
-
 var AWS = require("aws-sdk");
 var http = require("http");
 var LineStream = require("byline").LineStream;
