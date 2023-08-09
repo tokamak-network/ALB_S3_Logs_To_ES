@@ -23,7 +23,7 @@ var stream = require("stream");
 
 var nowDate = new Date();
 var indexTimestamp =
-  String(nowDate.getFullYear()) + "-" + String(nowDate.getMonth());
+  String(nowDate.getFullYear()) + "-" + String(nowDate.getMonth() + 1);
 var zlib = require("zlib");
 /* Globals */
 
@@ -152,7 +152,7 @@ function parse(line) {
   }
   [
     { type: " " },
-    { timestamp: " " },
+    { "@timestamp": " " },
     { elb: " " },
     { client: ":" },
     { client_port: " " },
