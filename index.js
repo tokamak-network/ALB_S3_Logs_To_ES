@@ -28,7 +28,7 @@ var zlib = require("zlib");
 /* Globals */
 
 var endpoint = process.env.ES_ENDPOINT;
-var index = "titan-alblogs-" + indexTimestamp;
+var index = "alblogs-" + indexTimestamp;
 
 var s3 = new AWS.S3();
 var totLogLines = 0; // Total number of log lines in the file
