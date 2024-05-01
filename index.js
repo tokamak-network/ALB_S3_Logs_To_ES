@@ -27,7 +27,8 @@ var indexTimestamp =
 var zlib = require("zlib");
 /* Globals */
 
-var endpoint = process.env.ES_ENDPOINT;
+var host = process.env.ES_ENDPOINT;
+var port = process.env.ES_PORT;
 var index = "alblogs-" + indexTimestamp;
 
 var s3 = new AWS.S3();
@@ -81,7 +82,8 @@ function s3LogsToES(bucket, key, context, lineStream, recordStream) {
  */
 function postDocumentToES(doc, context) {
   var options = {
-    host: endpoint,
+    host,
+    port,
     path: path.join("/", index, "_doc"),
     method: "POST",
     headers: {
